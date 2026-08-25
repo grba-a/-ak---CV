@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Žak Stević - Interactive CV</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #1a365d; /* Navy Blue */
+            --secondary: #4a5568; /* Slate Grey */
+            --accent: #3182ce;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --timeline-line: #cbd5e0;
+        }
+
+        [data-theme="dark"] {
+            --primary: #90cdf4;
+            --secondary: #a0aec0;
+            --accent: #63b3ed;
+            --bg: #1a202c;
+            --card-bg: #2d3748;
+            --text-main: #f7fafc;
+            --text-muted: #e2e8f0;
+            --border: #4a5568;
+            --timeline-line: #4a5568;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text-main); 
+            line-height: 1.6; 
+            transition: background-color 0.3s, color 0.3s; 
+        }
+
+        .container { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 2rem; 
+            display: grid; 
+            grid-template-columns: 1fr 2.5fr; 
+            gap: 2rem; 
+        }
+
+        /* Sidebar Profile */
+        .sidebar { 
+            background-color: var(--card-bg); 
+            padding: 2rem; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            position: sticky; 
+            top: 2rem; 
+            height: fit-content; 
+            transition: background-color 0.3s; 
+        }
+
+        .profile-img { 
+            width: 160px; 
+            height: 160px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 4px solid var(--primary); 
+            margin: 0 auto 1.5rem; 
+            display: block; 
+            transition: border-color 0.3s;
+        }
+
+        .name { text-align: center; font-size: 1.7rem; color: var(--primary); margin-bottom: 0.2rem; transition: color 0.3s; font-weight: 700; }
+        .title { text-align: center; color: var(--secondary); font-weight: 600; font-size: 0.9rem; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .contact-item { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-main); }
+        .contact-item i { color: var(--accent); width: 20px; text-align: center; font-size: 1.1rem;}
+        
+        .section-title { font-size: 1.25rem; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin: 2rem 0 1rem; transition: color 0.3s; font-weight: 600; }
+        
+        /* Tags (Skills & Languages) */
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { background: var(--bg); border: 1px solid var(--border); color: var(--text-main); padding: 5px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
+        .tag:hover { background: var(--primary); color: #fff; border-color: var(--primary); cursor: default; transform: translateY(-2px); }
+        
+        /* Main Content */
+        .main-content { display: flex; flex-direction: column; gap: 2rem; }
+        .card { background: var(--card-bg); padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: background-color 0.3s; }
+        
+        p.summary-text { font-size: 1rem; color: var(--text-main); text-align: justify; }
+
+        /* Timeline for Experience & Education */
+        .timeline { position: relative; padding-left: 2rem; margin-top: 1rem; }
+        .timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: var(--timeline-line); transition: background 0.3s; }
+        .timeline-item { position: relative; margin-bottom: 2.5rem; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-item::before { 
+            content: ''; position: absolute; left: -35px; top: 6px; width: 14px; height: 14px; 
+            border-radius: 50%; background: var(--accent); border: 3px solid var(--card-bg); 
+            box-shadow: 0 0 0 2px var(--timeline-line); transition: background 0.3s, border-color 0.3s; 
+        }
+        .timeline-item:hover::before { background: var(--primary); transform: scale(1.2); }
+        
+        .time-date { font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-bottom: 0.25rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
+        .job-title { font-size: 1.15rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.25rem; }
+        .company { font-size: 0.95rem; color: var(--secondary); font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px; }
+        .timeline-item ul { margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem; }
+        .timeline-item li { margin-bottom: 0.4rem; }
+
+        /* Scroll Animations */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Dark Mode Toggle Switch */
+        .header-top { display: flex; justify-content: flex-end; padding: 1rem 2rem 0; max-width: 1100px; margin: 0 auto; align-items: center; }
+        .theme-switch { display: inline-block; height: 28px; position: relative; width: 50px; margin-left: 10px;}
+        .theme-switch input { display: none; }
+        .slider { background-color: #ccc; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0; transition: .4s; border-radius: 34px; }
+        .slider:before { background-color: #fff; bottom: 3px; content: ""; height: 22px; left: 4px; position: absolute; transition: .4s; width: 22px; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(20px); }
+        
+        @media (max-width: 850px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+        }
+
+        /* Print Settings for PDF Export */
+        @media print {
+            body { background: #fff !important; color: #000 !important; }
+            .container { display: block; max-width: 100%; padding: 0; gap: 0; }
+            .sidebar { box-shadow: none; padding: 0; margin-bottom: 2rem; border-bottom: 2px solid #eee; border-radius: 0; position: static; }
+            .card { box-shadow: none; padding: 0 0 1.5rem 0; page-break-inside: avoid; }
+            .header-top { display: none; }
+            .reveal { opacity: 1; transform: none; }
+            .timeline-item { page-break-inside: avoid; }
+            * { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dark Mode Toggle -->
+    <div class="header-top">
+        <i class="fas fa-sun" style="color: #ecc94b;"></i>
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider"></div>
+        </label>
+        <i class="fas fa-moon" style="margin-left: 10px; color: var(--secondary);"></i>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar Column -->
+        <aside class="sidebar reveal">
+            <!-- IMPORTANT: Change 'slika.jpg' to the actual photo file name -->
+            <img src="slika.jpg" alt="Žak Stević" class="profile-img" onerror="this.src='https://via.placeholder.com/160/1a365d/ffffff?text=Žak'">
+            
+            <h1 class="name">Žak Stević</h1>
+            <h2 class="title">Operations & Hospitality Professional</h2>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>zakstevic18@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>(+385) 99 299 3727</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Zagreb, Croatia</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-car"></i>
+                    <span>Driving Licence: Category B</span>
+                </div>
+            </div>
+
+            <h3 class="section-title">Languages</h3>
+            <div class="tags">
+                <span class="tag">Croatian (Native)</span>
+                <span class="tag">English (C2/C1)</span>
+                <span class="tag">German (A1)</span>
+                <span class="tag">Italian (A1)</span>
+            </div>
+
+            <h3 class="section-title">Core Skills</h3>
+            <div class="tags">
+                <span class="tag">MS Office Suite</span>
+                <span class="tag">Customer Support</span>
+                <span class="tag">Inventory Management</span>
+                <span class="tag">Social Media Management</span>
+                <span class="tag">Internet Research</span>
+                <span class="tag">Windows OS</span>
+            </div>
+
+            <h3 class="section-title">Soft Skills</h3>
+            <div class="tags">
+                <span class="tag">Calm Under Pressure</span>
+                <span class="tag">Proactive</span>
+                <span class="tag">Team Leadership</span>
+                <span class="tag">Adaptability</span>
+                <span class="tag">Clear Communication</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Column -->
+        <main class="main-content">
+            
+            <!-- Summary Section -->
+            <section class="card reveal">
+                <h3 class="section-title" style="margin-top: 0;">Professional Summary</h3>
+                <p class="summary-text">
+                    A young and ambitious professional with diverse experience spanning fine-dining hospitality, customer support, and operations. Through experience in top-tier restaurants and international competitions, I have developed a strong work ethic, adaptability, and a professional approach. Basic military training further strengthened my discipline, ability to thrive under pressure in team environments, and sense of responsibility within hierarchical structures. Open to new challenges, I am a quick learner who executes tasks reliably and integrates easily into any team.
+                </p>
+            </section>
+
+            <!-- Work Experience Section -->
+            <section class="card reveal">
+                <h3 class="section-title" style="margin-top: 0;">Work Experience</h3>
+                <div class="timeline">
+                    
+                    <div class="timeline-item">
+                        <span class="time-date">Mar 2026 – May 2026</span>
+                        <h4 class="job-title">Basic Military Training</h4>
+                        <div class="company"><i class="fas fa-building"></i> MORH (Ministry of Defence) | <i class="fas fa-map-pin"></i> Knin, Croatia</div>
+                        <ul>
+                            <li>Mastered military skills through intensive physical and mental training.</li>
+                            <li>Developed the ability to work in high-pressure team environments while maintaining strict discipline.</li>
+                            <li>Maintained a strong focus on precise task execution and operation within hierarchical structures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <span class="time-date">Nov 2023 – Mar 2026</span>
+                        <h4 class="job-title">Waiter</h4>
+                        <div class="company"><i class="fas fa-utensils"></i> Batak Grill | <i class="fas fa-map-pin"></i> Zagreb, Croatia</div>
+                        <ul>
+                            <li>Applied high standards of hospitality service in one of the leading restaurant chains.</li>
+                            <li>Managed daily interaction with a large volume of guests in a fast-paced environment.</li>
+                            <li>Handled cash operations and maintained in-depth knowledge of extensive menus and wine lists.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <span class="time-date">May 2023 – Present</span>
+                        <h4 class="job-title">Driver / Assistant</h4>
+                        <div class="company"><i class="fas fa-car-side"></i> Avant | <i class="fas fa-map-pin"></i> Dubrovnik, Croatia</div>
+                        <ul>
+                            <li>Managed company vehicles, including transport to service, damage inspection, and technical registrations.</li>
+                            <li>Provided daily client care, customer support, and assisted in insurance sales and vehicle replacements.</li>
+                            <li>Executed domestic and international field interventions and vehicle transfers between branches.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <span class="time-date">Apr 2022 – Nov 2022</span>
+                        <h4 class="job-title">Waiter</h4>
+                        <div class="company"><i class="fas fa-wine-glass-alt"></i> Posat | <i class="fas fa-map-pin"></i> Dubrovnik, Croatia</div>
+                        <ul>
+                            <li>Gained valuable experience in sommelier practices, gastronomy, and regular bar service.</li>
+                            <li>Collaborated across all restaurant departments, focusing on skill development in a fine-dining setting.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <span class="time-date">Jun 2021 – Sep 2021</span>
+                        <h4 class="job-title">Head Waiter / Floor Manager</h4>
+                        <div class="company"><i class="fas fa-user-tie"></i> San Marco | <i class="fas fa-map-pin"></i> Pašman, Croatia</div>
+                        <ul>
+                            <li>Promoted to Floor Manager, overseeing shift leadership and daily business operations.</li>
+                            <li>Managed inventory procurement and monitored market trends and competitor activities.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <span class="time-date">Jun 2020 – Sep 2020</span>
+                        <h4 class="job-title">Waiter</h4>
+                        <div class="company"><i class="fas fa-concierge-bell"></i> San Marco | <i class="fas fa-map-pin"></i> Pašman, Croatia</div>
+                        <ul>
+                            <li>Executed operational plans, monitored payment processes, and provided bilingual customer service.</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Education Section -->
+            <section class="card reveal">
+                <h3 class="section-title" style="margin-top: 0;">Education & Achievements</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="time-date">Sep 2019 – Jun 2023</span>
+                        <h4 class="job-title">Tourism and Hospitality School</h4>
+                        <div class="company"><i class="fas fa-graduation-cap"></i> Dubrovnik, Croatia</div>
+                    </div>
+                    <div class="timeline-item">
+                        <h4 class="job-title">2nd Place Winner</h4>
+                        <div class="company"><i class="fas fa-trophy"></i> Grand Gourmet International Competition | Split, Croatia</div>
+                    </div>
+                    <div class="timeline-item">
+                        <h4 class="job-title">Sommelier Category Competitor</h4>
+                        <div class="company"><i class="fas fa-award"></i> AEHT International Competition | Senigallia, Italy</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Extras Section -->
+            <section class="card reveal">
+                <h3 class="section-title" style="margin-top: 0;">Conferences & Interests</h3>
+                <ul style="list-style-position: inside; color: var(--text-main); font-size: 0.95rem; line-height: 1.8;">
+                    <li><strong>Seminar:</strong> Robert Bosma "Mind Your Guest" (Senigallia, Italy)</li>
+                    <li><strong>Workshop:</strong> Lyaness Bar London (Dubrovnik)</li>
+                    <li><strong>Athletics:</strong> Member of Football Club "Župa Dubrovačka"</li>
+                </ul>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Dark Mode Logic
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }    
+        }
+        toggleSwitch.addEventListener('change', switchTheme, false);
+
+        // Scroll Animation Logic
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 50;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        // Trigger on load
+        reveal();
+    </script>
+</body>
+</html>
